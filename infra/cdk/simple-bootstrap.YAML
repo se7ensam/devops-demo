@@ -1,0 +1,36 @@
+Description: Minimal CDK Bootstrap for LocalStack
+Parameters:
+  Qualifier:
+    Type: String
+    Default: hnb659fds
+Resources:
+  StagingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'cdk-${Qualifier}-assets-${AWS::AccountId}-${AWS::Region}'
+      VersioningConfiguration:
+        Status: Enabled
+  StagingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref StagingBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action: 's3:*'
+            Resource: !Sub 'arn:aws:s3:::${StagingBucket}/*'
+  CdkBootstrapVersion:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: !Sub '/cdk-bootstrap/${Qualifier}/version'
+      Value: '12'
+      Description: CDK bootstrap version
+Outputs:
+  BucketName:
+    Value: !Ref StagingBucket
+  BootstrapVersion:
+    Value: !GetAtt CdkBootstrapVersion.Value
