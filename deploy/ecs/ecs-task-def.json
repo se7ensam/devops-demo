@@ -1,0 +1,29 @@
+{
+  "family": "ecs-api-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::590184099928:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "ecs-api",
+      "image": "590184099928.dkr.ecr.ap-south-1.amazonaws.com/ecs-api-service:v2",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/ecs-api",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
